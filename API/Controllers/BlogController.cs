@@ -17,19 +17,19 @@ namespace API.Controllers
 {
     [EnableCors("AureliaSPA")]
     [Route("api/[controller]")]
-    public class PostController : Controller
+    public class BlogController : Controller
     {
         private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly PostContext _postcontext;
+        private readonly BlogContext _blogcontext;
 
-        public PostController(IHostingEnvironment hostingEnvironment, PostContext postContext, IPostRepository postItems)
+        public BlogController(IHostingEnvironment hostingEnvironment, BlogContext blogContext, IBlogRepository postItems)
         {
             _hostingEnvironment = hostingEnvironment;
-            _postcontext = postContext;
+            _blogcontext = blogContext;
             PostItems = postItems;
         }
 
-        public IPostRepository PostItems { get; set; }
+        public IBlogRepository PostItems { get; set; }
 
         [HttpGet]
         public IEnumerable<PostItem> GetAll()
@@ -234,7 +234,7 @@ namespace API.Controllers
 
         [HttpGet("ClearAllData")]
         public IActionResult ClearAllData() {
-            var rowsAffectedCount = _postcontext.Database.ExecuteSqlCommand("delete from PostItems");
+            var rowsAffectedCount = _blogcontext.Database.ExecuteSqlCommand("delete from PostItems");
             return Ok(new { count = rowsAffectedCount });
         }
     }

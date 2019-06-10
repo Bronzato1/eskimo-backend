@@ -7,7 +7,7 @@ using API.Models;
 
 namespace API.Migrations
 {
-    [DbContext(typeof(PostContext))]
+    [DbContext(typeof(BlogContext))]
     [Migration("20190324140545_InitialCreate")]
     partial class InitialCreate
     {

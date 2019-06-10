@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Models
 {
-    public class PostContext : DbContext
+    public class BlogContext : DbContext
     {
-        public PostContext(DbContextOptions<PostContext> options) : base(options)
+        public BlogContext(DbContextOptions<BlogContext> options) : base(options)
         { }
 
         public DbSet<PostItem> PostItems { get; set; }

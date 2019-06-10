@@ -53,8 +53,8 @@ namespace API
                 
             string appRoot = Environment.CurrentDirectory;
             string database = System.IO.Path.Combine(appRoot + @"\", @"App_Data\blogging.db");
-            services.AddDbContext<PostContext> (options => options.UseSqlite("Data Source=" + database));
-            services.AddScoped<IPostRepository, PostRepository>();
+            services.AddDbContext<BlogContext> (options => options.UseSqlite("Data Source=" + database));
+            services.AddScoped<IBlogRepository, BlogRepository>();
             
             //Transient objects are always different; a new instance is provided to every controller and every service.
             //Scoped objects are the same within a request, but different across different requests.

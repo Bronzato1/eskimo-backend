@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Models
 {
-    public class PostRepository : IPostRepository
+    public class BlogRepository : IBlogRepository
     {
-        private readonly PostContext _context;
+        private readonly BlogContext _context;
 
-        public PostRepository(PostContext context)
+        public BlogRepository(BlogContext context)
         {
             _context = context;
         }

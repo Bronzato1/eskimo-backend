@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace API.Migrations
 {
-    [DbContext(typeof(PostContext))]
+    [DbContext(typeof(BlogContext))]
     [Migration("20190420151333_AddCreationDateOnPostItem")]
     partial class AddCreationDateOnPostItem
     {

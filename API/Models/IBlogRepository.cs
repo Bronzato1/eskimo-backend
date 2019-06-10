@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace API.Models
 {
-    public interface IPostRepository
+    public interface IBlogRepository
     {
         void Add(PostItem item);
         IEnumerable<PostItem> GetAll();

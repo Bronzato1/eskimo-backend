@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace API.Migrations
 {
-    [DbContext(typeof(PostContext))]
+    [DbContext(typeof(BlogContext))]
     [Migration("20190525130458_AddTagsOnPostItem")]
     partial class AddTagsOnPostItem
     {
