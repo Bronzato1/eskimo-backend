@@ -13,6 +13,12 @@ namespace API.Models
         public string Title { get; set; }
         public string Content { get; set; }
         public DateTime Creation { get; set; }
+        public int ReadingTime { get; set; }
+        
+        [Required]
+        public int CategoryId { get; set; }
+        public virtual Category Category { get; set; }
+
         public List<Tag> Tags { get; set; }
     }
 }

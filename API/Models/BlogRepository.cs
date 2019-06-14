@@ -15,24 +15,32 @@ namespace API.Models
             _context = context;
         }
 
-        public IEnumerable<PostItem> GetAll()
-        {
-            return _context.PostItems.Include(x => x.Tags).ToList();
-        }
+        // P O S T S
 
-        public void Add(PostItem item)
+        public void CreatePost(PostItem item)
         {
             _context.PostItems.Add(item);
             _context.SaveChanges();
         }
 
-        public PostItem Find(int id)
+        public IEnumerable<PostItem> GetAllPosts()
         {
-            var result = _context.PostItems.Include(x => x.Tags).Where(t => t.Id == id).FirstOrDefault();
+            return _context.PostItems.Include(x => x.Category).Include(x => x.Tags).ToList();
+        }
+
+        public PostItem GetPost(int id)
+        {
+            var result = _context.PostItems.Include(x => x.Category).Include(x => x.Tags).Where(t => t.Id == id).FirstOrDefault();
             return result;
         }
 
-        public void Remove(int id)
+        public void UpdatePost(PostItem item)
+        {
+            _context.PostItems.Update(item);
+            _context.SaveChanges();
+        }
+
+        public void DeletePost(int id)
         {
             var entity = _context.PostItems.First(t => t.Id == id);
             if (entity != null)
@@ -42,20 +50,36 @@ namespace API.Models
             }
         }
 
-        public void Update(PostItem item)
+        // T A G S
+
+        public void CreateTag(Tag item)
         {
-            _context.PostItems.Update(item);
-            _context.SaveChanges();
-        }
-    
-        public void AddTag(int postId, string tagName) 
-        {
-            Tag tag = new Tag { PostItemId = postId, Name = tagName };
-            _context.Tags.Add(tag);
+            _context.Tags.Add(item);
             _context.SaveChanges();
         }
 
-        public void RemoveTag(int postId, string tagName) 
+        public IEnumerable<Tag> GetAllTags()
+        {
+            return _context.Tags.ToList();
+        }
+
+        public Tag GetTag(int id)
+        {
+            var result = _context.Tags.Where(t => t.Id == id).FirstOrDefault();
+            return result;
+        }
+
+        public void UpdateTag(int postId, string tagOldName, string tagNewName)
+        {
+            var entity = _context.Tags.Where(x => x.PostItemId == postId && x.Name == tagOldName).SingleOrDefault();
+            if (entity != null)
+            {
+                entity.Name = tagNewName;
+                _context.SaveChanges();
+            }
+        }
+
+        public void DeleteTag(int postId, string tagName)
         {
             var entity = _context.Tags.Where(x => x.PostItemId == postId && x.Name == tagName).SingleOrDefault();
             if (entity != null)
@@ -65,12 +89,37 @@ namespace API.Models
             }
         }
 
-        public void ChangeTag(int postId, string tagOldName, string tagNewName) 
+        // C A T E G O R I E S
+
+        public void CreateCategory(Category item)
         {
-            var entity = _context.Tags.Where(x => x.PostItemId == postId && x.Name == tagOldName).SingleOrDefault();
-            if (entity != null)
+            _context.Categories.Add(item);
+            _context.SaveChanges();
+        }
+
+        public IEnumerable<Category> GetAllCategories()
+        {
+            return _context.Categories.ToList();
+        }
+
+        public Category GetCategory(int id)
+        {
+            var result = _context.Categories.Where(t => t.Id == id).FirstOrDefault();
+            return result;
+        }
+
+        public void UpdateCategory(Category item)
+        {
+            _context.Categories.Update(item);
+            _context.SaveChanges();
+        }
+
+        public void DeleteCategory(int id)
+        {
+            var cat = _context.Categories.Where(x => x.Id == id).SingleOrDefault();
+            if (cat != null)
             {
-                entity.Name = tagNewName;
+                _context.Categories.Remove(cat);
                 _context.SaveChanges();
             }
         }

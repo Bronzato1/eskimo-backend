@@ -17,30 +17,40 @@ namespace API.Controllers
 {
     [EnableCors("AureliaSPA")]
     [Route("api/[controller]")]
-    public class BlogController : Controller
+    public class PostController : Controller
     {
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly BlogContext _blogcontext;
+        private IBlogRepository _blogRepository { get; set; }
 
-        public BlogController(IHostingEnvironment hostingEnvironment, BlogContext blogContext, IBlogRepository postItems)
+        public PostController(IHostingEnvironment hostingEnvironment, BlogContext blogContext, IBlogRepository blogRepository)
         {
             _hostingEnvironment = hostingEnvironment;
             _blogcontext = blogContext;
-            PostItems = postItems;
+            _blogRepository = blogRepository;
         }
 
-        public IBlogRepository PostItems { get; set; }
+        [HttpPost]
+        public IActionResult CreatePost([FromBody] PostItem item)
+        {
+            if (item == null)
+            {
+                return BadRequest();
+            }
+            _blogRepository.CreatePost(item);
+            return CreatedAtRoute("GetPost", new { id = item.Id }, item);
+        }
 
         [HttpGet]
         public IEnumerable<PostItem> GetAll()
         {
-            return PostItems.GetAll();
+            return _blogRepository.GetAllPosts();
         }
 
         [HttpGet("{id}", Name = "GetPost")]
         public IActionResult GetById(int id)
         {
-            var item = PostItems.Find(id);
+            var item = _blogRepository.GetPost(id);
             if (item == null)
             {
                 return NotFound();
@@ -48,29 +58,15 @@ namespace API.Controllers
             return new ObjectResult(item);
         }
 
-        [HttpPost]
-        public IActionResult Create([FromBody] PostItem item)
-        {
-            if (item == null)
-            {
-                return BadRequest();
-            }
-            // Tag tagA = new Tag { Name = "AAA" };
-            // item.Tags = new List<Tag>();
-            // item.Tags.Add(tagA);
-            PostItems.Add(item);
-            return CreatedAtRoute("GetPost", new { id = item.Id }, item);
-        }
-
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] PostItem item)
+        public IActionResult UpdatePost(int id, [FromBody] PostItem item)
         {
             if (item == null || item.Id != id)
             {
                 return BadRequest();
             }
 
-            var post = PostItems.Find(id);
+            var post = _blogRepository.GetPost(id);
             if (post == null)
             {
                 return NotFound();
@@ -79,15 +75,17 @@ namespace API.Controllers
             post.Title = item.Title;
             post.Content = item.Content;
             post.Creation = item.Creation;
+            post.CategoryId = item.CategoryId;
+            post.ReadingTime = item.ReadingTime;
 
-            PostItems.Update(post);
+            _blogRepository.UpdatePost(post);
             return new NoContentResult();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult DeletePost(int id)
         {
-            var post = PostItems.Find(id);
+            var post = _blogRepository.GetPost(id);
             if (post == null)
             {
                 return NotFound();
@@ -105,34 +103,9 @@ namespace API.Controllers
                         System.IO.File.Delete(fullPath);
                 }
             }
-            
-            PostItems.Remove(id);
+
+            _blogRepository.DeletePost(id);
             return new NoContentResult();
-        }
-
-        [HttpPost("TagAdded")]
-        public IActionResult TagAdded([FromBody] JObject obj) {
-            var postId = (int)obj.GetValue("postId");
-            var tagName = (string)obj.GetValue("tagName");    
-            PostItems.AddTag(postId, tagName);
-            return Ok();
-        }
-
-        [HttpPost("TagDeleted")]
-        public IActionResult TagDeleted([FromBody] JObject obj) {
-            var postId = (int)obj.GetValue("postId");
-            var tagName = (string)obj.GetValue("tagName");    
-            PostItems.RemoveTag(postId, tagName);
-            return Ok();
-        }
-
-        [HttpPost("TagChanged")]
-        public IActionResult TagChanged([FromBody] JObject obj) {
-            var postId = (int)obj.GetValue("postId");
-            var tagOldName = (string)obj.GetValue("tagOldName");
-            var tagNewName = (string)obj.GetValue("tagNewName");
-            PostItems.ChangeTag(postId, tagOldName, tagNewName);
-            return Ok();
         }
 
         [HttpPost("DownloadZip")]
@@ -149,7 +122,7 @@ namespace API.Controllers
             foreach (var file in di.EnumerateFiles("export*.*")) { file.Delete(); }
 
             Newtonsoft.Json.Linq.JArray json = new JArray(
-                PostItems.GetAll().Where(x => ids.Contains(x.Id)).Select(p => new JObject
+                _blogRepository.GetAllPosts().Where(x => ids.Contains(x.Id)).Select(p => new JObject
                 {
                     { "Title", p.Title},
                     { "Creation", p.Creation},
@@ -207,7 +180,7 @@ namespace API.Controllers
 
             var elements = Newtonsoft.Json.JsonConvert.DeserializeObject<JArray>(json).ToObject<List<JObject>>();
 
-            foreach(var elm in elements) 
+            foreach (var elm in elements)
             {
                 Console.WriteLine("t = " + elm["Title"]);
                 Console.WriteLine("l = " + elm["Content"]);
@@ -220,9 +193,9 @@ namespace API.Controllers
                     Creation = (DateTime)elm["Creation"]
                 };
 
-                PostItems.Add(postItem);
+                _blogRepository.CreatePost(postItem);
             }
-            
+
             if (System.IO.File.Exists(jsonFilePath))
                 System.IO.File.Delete(jsonFilePath);
 
@@ -232,8 +205,9 @@ namespace API.Controllers
             return Ok(new { count = elements.Count });
         }
 
-        [HttpGet("ClearAllData")]
-        public IActionResult ClearAllData() {
+        [HttpGet("ClearAllPosts")]
+        public IActionResult ClearAllPosts()
+        {
             var rowsAffectedCount = _blogcontext.Database.ExecuteSqlCommand("delete from PostItems");
             return Ok(new { count = rowsAffectedCount });
         }
