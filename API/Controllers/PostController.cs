@@ -72,6 +72,7 @@ namespace API.Controllers
                 return NotFound();
             }
 
+            post.Image = item.Image;
             post.Title = item.Title;
             post.Content = item.Content;
             post.Creation = item.Creation;
@@ -79,7 +80,7 @@ namespace API.Controllers
             post.ReadingTime = item.ReadingTime;
 
             _blogRepository.UpdatePost(post);
-            return new NoContentResult();
+            return CreatedAtRoute("GetPost", new { id = item.Id }, item);
         }
 
         [HttpDelete("{id}")]

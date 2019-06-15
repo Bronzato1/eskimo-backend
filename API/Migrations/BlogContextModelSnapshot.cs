@@ -46,6 +46,8 @@ namespace api.Migrations
 
                     b.Property<DateTime>("Creation");
 
+                    b.Property<string>("Image");
+
                     b.Property<int>("ReadingTime");
 
                     b.Property<string>("Title");
