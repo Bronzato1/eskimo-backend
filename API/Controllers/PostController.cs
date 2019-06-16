@@ -109,44 +109,75 @@ namespace API.Controllers
             return new NoContentResult();
         }
 
-        [HttpPost("DownloadZip")]
-        public IActionResult DownloadZip([FromBody] List<int> ids)
+        [HttpPost("ExportZip")]
+        public IActionResult ExportZip([FromBody] List<int> ids)
         {
             string webrootPath = _hostingEnvironment.WebRootPath;
             string uploadPath = System.IO.Path.Combine(webrootPath, "uploads");
+            string exportPath = System.IO.Path.Combine(webrootPath, "export");
             string jsonFileName = "export.json";
-            string jsonFilePath = System.IO.Path.Combine(webrootPath + @"\", jsonFileName);
+            string jsonFilePath = System.IO.Path.Combine(exportPath + @"\", jsonFileName);
             string zipFileName = string.Format("export-{0}.zip", DateTime.Now.ToString("yyyy-MM-dd"));
             string zipFilePath = System.IO.Path.Combine(webrootPath + @"\", zipFileName);
+            DirectoryInfo di;
 
-            DirectoryInfo di = new System.IO.DirectoryInfo(webrootPath);
+            if (!Directory.Exists(exportPath))
+                Directory.CreateDirectory(exportPath);
+
+            di = new System.IO.DirectoryInfo(webrootPath);
             foreach (var file in di.EnumerateFiles("export*.*")) { file.Delete(); }
 
-            Newtonsoft.Json.Linq.JArray json = new JArray(
-                _blogRepository.GetAllPosts().Where(x => ids.Contains(x.Id)).Select(p => new JObject
-                {
-                    { "Title", p.Title},
-                    { "Creation", p.Creation},
-                    { "Content", p.Content}
-                })
-            );
+            di = new System.IO.DirectoryInfo(exportPath);
+            foreach (var file in di.EnumerateFiles("*.*")) { file.Delete(); }
+
+            // Newtonsoft.Json.Linq.JArray json = new JArray(
+            //     _blogRepository.GetAllPosts().Where(x => ids.Contains(x.Id)).Select(p => new JObject
+            //     {
+            //         { "Title", p.Title },
+            //         { "Creation", p.Creation },
+            //         { "CategoryId", p.CategoryId },
+            //         { "Category.FrenchName", p.Category.FrenchName },
+            //         { "Category.EnglishName", p.Category.EnglishName },
+            //         { "Image", p.Image },
+            //         { "TagNames", string.Join(',', p.Tags) },
+            //         { "Content", p.Content }
+            //     })
+            // );
+
+
+            var data = _blogRepository.GetAllPosts().Where(x => ids.Contains(x.Id)).ToList();
+            string json = Newtonsoft.Json.JsonConvert.SerializeObject(data, Newtonsoft.Json.Formatting.Indented,
+            new Newtonsoft.Json.JsonSerializerSettings
+            {
+                ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            });
+
+            // var userData = new PostItem { Id = 1, Title = "My title" };
+            // var userDataString = Newtonsoft.Json.JsonConvert.SerializeObject(userData);
 
             System.IO.File.WriteAllText(jsonFilePath, json.ToString());
 
-            ZipFile.CreateFromDirectory(uploadPath, zipFilePath);
-
-            using (ZipArchive archive = ZipFile.Open(zipFilePath, ZipArchiveMode.Update))
+            _blogRepository.GetAllPosts().Where(x => ids.Contains(x.Id)).ToList().ForEach(x =>
             {
-                archive.CreateEntryFromFile(jsonFilePath, jsonFileName);
-            }
+                MatchCollection matches = Regex.Matches(x.Content, "<img.+?src=[\"'](.+?)[\"'].*?>", RegexOptions.IgnoreCase);
+                matches.ToList().ForEach(match =>
+                {
+                    string fileName = Path.GetFileName(match.Groups[1].Value);
+                    string sourceFileName = Path.Combine(uploadPath, fileName);
+                    string destFileName = Path.Combine(exportPath, fileName);
+                    System.IO.File.Copy(sourceFileName, destFileName);
+                });
+            });
+
+            ZipFile.CreateFromDirectory(exportPath, zipFilePath);
 
             byte[] contents = System.IO.File.ReadAllBytes(zipFilePath);
             foreach (var file in di.EnumerateFiles("export*.*")) { file.Delete(); }
             return File(contents, "application/octetstream");
         }
 
-        [HttpPost("UploadZip")]
-        public async Task<IActionResult> UploadZip(IFormFile file)
+        [HttpPost("ImportZip")]
+        public async Task<IActionResult> ImportZip(IFormFile file)
         {
             long size = file.Length;
 
@@ -155,6 +186,9 @@ namespace API.Controllers
             string uploadPath = System.IO.Path.Combine(webrootPath, "uploads");
             string jsonFilePath = System.IO.Path.Combine(uploadPath + @"\", @"export.json");
             string importFilePath = System.IO.Path.Combine(appRoot + @"\", @"App_Data\import.zip");
+            List<string> errors = new List<string>();
+            int countSucceed = 0;
+            int countError = 0;
 
             if (file.Length == 0) throw new Exception("Le fichier est vide");
             if (file.FileName.EndsWith(".zip") == false) throw new Exception("Le type du fichier n'est pas valide");
@@ -179,22 +213,25 @@ namespace API.Controllers
 
             string json = System.IO.File.ReadAllText(jsonFilePath);
 
-            var elements = Newtonsoft.Json.JsonConvert.DeserializeObject<JArray>(json).ToObject<List<JObject>>();
+            var elements = (List<PostItem>)Newtonsoft.Json.JsonConvert.DeserializeObject(json, typeof(List<PostItem>));
 
-            foreach (var elm in elements)
+            foreach (var postItem in elements)
             {
-                Console.WriteLine("t = " + elm["Title"]);
-                Console.WriteLine("l = " + elm["Content"]);
-                Console.WriteLine("c = " + elm["Creation"]);
+                var postAlreadyExists = _blogcontext.PostItems.Any(x => x.Id == postItem.Id);
 
-                PostItem postItem = new PostItem
+                if (postAlreadyExists)
                 {
-                    Title = (string)elm["Title"],
-                    Content = (string)elm["Content"],
-                    Creation = (DateTime)elm["Creation"]
-                };
-
-                _blogRepository.CreatePost(postItem);
+                    countError++;
+                    errors.Add(string.Format("Le billet {0} existe déjà.", postItem.Id));
+                    continue;
+                }
+                else
+                {
+                    countSucceed++;
+                    var categoryAlreadyExists = _blogcontext.Categories.Any(x => x.Id == postItem.CategoryId);
+                    if (categoryAlreadyExists) postItem.Category = null;
+                    _blogRepository.CreatePost(postItem);
+                }
             }
 
             if (System.IO.File.Exists(jsonFilePath))
@@ -203,7 +240,7 @@ namespace API.Controllers
             if (System.IO.File.Exists(importFilePath))
                 System.IO.File.Delete(importFilePath);
 
-            return Ok(new { count = elements.Count });
+            return Ok(new { countSucceed = countSucceed, countError = countError, errors = errors });
         }
 
         [HttpGet("ClearAllPosts")]

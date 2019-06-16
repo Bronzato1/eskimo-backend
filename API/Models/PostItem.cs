@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace API.Models
 {
@@ -15,11 +16,10 @@ namespace API.Models
         public string Content { get; set; }
         public DateTime Creation { get; set; }
         public int ReadingTime { get; set; }
-        
+
         [Required]
         public int CategoryId { get; set; }
         public virtual Category Category { get; set; }
-
         public List<Tag> Tags { get; set; }
     }
 }
