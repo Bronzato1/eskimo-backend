@@ -92,6 +92,14 @@ namespace API.Controllers
                 return NotFound();
             }
 
+            if (post.Image != null)
+            {
+                string fileName = System.IO.Path.GetFileName(post.Image);
+                string fullPath = System.IO.Path.GetFullPath("wwwroot/uploads/" + fileName);
+                if (System.IO.File.Exists(fullPath))
+                    System.IO.File.Delete(fullPath);
+            }
+
             if (post.Content != null)
             {
                 var matches = Regex.Matches(post.Content, "<img.+?src=[\"'](.+?)[\"'].+?>", RegexOptions.IgnoreCase); //.Groups[1].Value; 
