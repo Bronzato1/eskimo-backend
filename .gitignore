@@ -1,7 +1,7 @@
 API/bin/
 API/obj/
+API/publish/
+API/App_Data/
+API/wwwroot/uploads/
 FROALA/bin/
 FROALA/obj/
-
-API/publish/
-
