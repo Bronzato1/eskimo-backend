@@ -127,6 +127,7 @@ namespace API.Controllers
             string jsonFilePath = System.IO.Path.Combine(exportPath + @"\", jsonFileName);
             string zipFileName = string.Format("export-{0}.zip", DateTime.Now.ToString("yyyy-MM-dd"));
             string zipFilePath = System.IO.Path.Combine(webrootPath + @"\", zipFileName);
+
             DirectoryInfo di;
 
             if (!Directory.Exists(exportPath))
@@ -138,30 +139,12 @@ namespace API.Controllers
             di = new System.IO.DirectoryInfo(exportPath);
             foreach (var file in di.EnumerateFiles("*.*")) { file.Delete(); }
 
-            // Newtonsoft.Json.Linq.JArray json = new JArray(
-            //     _blogRepository.GetAllPosts().Where(x => ids.Contains(x.Id)).Select(p => new JObject
-            //     {
-            //         { "Title", p.Title },
-            //         { "Creation", p.Creation },
-            //         { "CategoryId", p.CategoryId },
-            //         { "Category.FrenchName", p.Category.FrenchName },
-            //         { "Category.EnglishName", p.Category.EnglishName },
-            //         { "Image", p.Image },
-            //         { "TagNames", string.Join(',', p.Tags) },
-            //         { "Content", p.Content }
-            //     })
-            // );
-
-
             var data = _blogRepository.GetAllPosts().Where(x => ids.Contains(x.Id)).ToList();
             string json = Newtonsoft.Json.JsonConvert.SerializeObject(data, Newtonsoft.Json.Formatting.Indented,
             new Newtonsoft.Json.JsonSerializerSettings
             {
                 ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             });
-
-            // var userData = new PostItem { Id = 1, Title = "My title" };
-            // var userDataString = Newtonsoft.Json.JsonConvert.SerializeObject(userData);
 
             System.IO.File.WriteAllText(jsonFilePath, json.ToString());
 
@@ -175,12 +158,25 @@ namespace API.Controllers
                     string destFileName = Path.Combine(exportPath, fileName);
                     System.IO.File.Copy(sourceFileName, destFileName);
                 });
+                if (x.Image != null)
+                {
+                    string fileName = Path.GetFileName(x.Image);
+                    string sourceFileName = Path.Combine(uploadPath, fileName);
+                    string destFileName = Path.Combine(exportPath, fileName);
+                    System.IO.File.Copy(sourceFileName, destFileName);
+                }
             });
 
             ZipFile.CreateFromDirectory(exportPath, zipFilePath);
 
             byte[] contents = System.IO.File.ReadAllBytes(zipFilePath);
+
+            di = new System.IO.DirectoryInfo(webrootPath);
             foreach (var file in di.EnumerateFiles("export*.*")) { file.Delete(); }
+
+            if (Directory.Exists(exportPath))
+                Directory.Delete(exportPath, true);
+
             return File(contents, "application/octetstream");
         }
 
