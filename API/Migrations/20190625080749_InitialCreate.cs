@@ -14,7 +14,8 @@ namespace api.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     FrenchName = table.Column<string>(nullable: false),
-                    EnglishName = table.Column<string>(nullable: false)
+                    EnglishName = table.Column<string>(nullable: false),
+                    Color = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -27,10 +28,14 @@ namespace api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Title = table.Column<string>(nullable: true),
-                    Content = table.Column<string>(nullable: true),
+                    Image = table.Column<string>(nullable: true),
                     Creation = table.Column<DateTime>(nullable: false),
-                    CategoryId = table.Column<int>(nullable: false)
+                    ReadingTime = table.Column<int>(nullable: false),
+                    CategoryId = table.Column<int>(nullable: false),
+                    FrenchTitle = table.Column<string>(nullable: true),
+                    FrenchContent = table.Column<string>(nullable: true),
+                    EnglishTitle = table.Column<string>(nullable: true),
+                    EnglishContent = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -49,6 +54,7 @@ namespace api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    language = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
                     PostItemId = table.Column<int>(nullable: false)
                 },

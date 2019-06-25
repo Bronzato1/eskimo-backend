@@ -42,15 +42,19 @@ namespace api.Migrations
 
                     b.Property<int>("CategoryId");
 
-                    b.Property<string>("Content");
-
                     b.Property<DateTime>("Creation");
+
+                    b.Property<string>("EnglishContent");
+
+                    b.Property<string>("EnglishTitle");
+
+                    b.Property<string>("FrenchContent");
+
+                    b.Property<string>("FrenchTitle");
 
                     b.Property<string>("Image");
 
                     b.Property<int>("ReadingTime");
-
-                    b.Property<string>("Title");
 
                     b.HasKey("Id");
 
@@ -67,6 +71,8 @@ namespace api.Migrations
                     b.Property<string>("Name");
 
                     b.Property<int>("PostItemId");
+
+                    b.Property<string>("language");
 
                     b.HasKey("Id");
 

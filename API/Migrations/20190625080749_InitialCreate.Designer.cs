@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace api.Migrations
 {
     [DbContext(typeof(BlogContext))]
-    [Migration("20190614103502_AddReadingTimeOnPostItem")]
-    partial class AddReadingTimeOnPostItem
+    [Migration("20190625080749_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -44,13 +44,19 @@ namespace api.Migrations
 
                     b.Property<int>("CategoryId");
 
-                    b.Property<string>("Content");
-
                     b.Property<DateTime>("Creation");
 
-                    b.Property<int>("ReadingTime");
+                    b.Property<string>("EnglishContent");
 
-                    b.Property<string>("Title");
+                    b.Property<string>("EnglishTitle");
+
+                    b.Property<string>("FrenchContent");
+
+                    b.Property<string>("FrenchTitle");
+
+                    b.Property<string>("Image");
+
+                    b.Property<int>("ReadingTime");
 
                     b.HasKey("Id");
 
@@ -67,6 +73,8 @@ namespace api.Migrations
                     b.Property<string>("Name");
 
                     b.Property<int>("PostItemId");
+
+                    b.Property<string>("language");
 
                     b.HasKey("Id");
 

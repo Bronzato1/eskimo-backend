@@ -73,8 +73,10 @@ namespace API.Controllers
             }
 
             post.Image = item.Image;
-            post.Title = item.Title;
-            post.Content = item.Content;
+            post.FrenchTitle = item.FrenchTitle;
+            post.EnglishTitle = item.EnglishTitle;
+            post.FrenchContent = item.FrenchContent;
+            post.EnglishContent = item.EnglishContent;
             post.Creation = item.Creation;
             post.CategoryId = item.CategoryId;
             post.ReadingTime = item.ReadingTime;
@@ -100,9 +102,22 @@ namespace API.Controllers
                     System.IO.File.Delete(fullPath);
             }
 
-            if (post.Content != null)
+            if (post.FrenchContent != null)
             {
-                var matches = Regex.Matches(post.Content, "<img.+?src=[\"'](.+?)[\"'].+?>", RegexOptions.IgnoreCase); //.Groups[1].Value; 
+                var matches = Regex.Matches(post.FrenchContent, "<img.+?src=[\"'](.+?)[\"'].+?>", RegexOptions.IgnoreCase);
+                foreach (Match match in matches)
+                {
+                    string urlPath = match.Groups[1].Value;
+                    string fileName = System.IO.Path.GetFileName(urlPath);
+                    string fullPath = System.IO.Path.GetFullPath("wwwroot/uploads/" + fileName);
+                    if (System.IO.File.Exists(fullPath))
+                        System.IO.File.Delete(fullPath);
+                }
+            }
+
+            if (post.EnglishContent != null)
+            {
+                var matches = Regex.Matches(post.EnglishContent, "<img.+?src=[\"'](.+?)[\"'].+?>", RegexOptions.IgnoreCase);
                 foreach (Match match in matches)
                 {
                     string urlPath = match.Groups[1].Value;
@@ -150,8 +165,16 @@ namespace API.Controllers
 
             _blogRepository.GetAllPosts().Where(x => ids.Contains(x.Id)).ToList().ForEach(x =>
             {
-                MatchCollection matches = Regex.Matches(x.Content, "<img.+?src=[\"'](.+?)[\"'].*?>", RegexOptions.IgnoreCase);
-                matches.ToList().ForEach(match =>
+                MatchCollection frenchMatches = Regex.Matches(x.FrenchContent, "<img.+?src=[\"'](.+?)[\"'].*?>", RegexOptions.IgnoreCase);
+                frenchMatches.ToList().ForEach(match =>
+                {
+                    string fileName = Path.GetFileName(match.Groups[1].Value);
+                    string sourceFileName = Path.Combine(uploadPath, fileName);
+                    string destFileName = Path.Combine(exportPath, fileName);
+                    System.IO.File.Copy(sourceFileName, destFileName);
+                });
+                MatchCollection englishMatches = Regex.Matches(x.EnglishContent, "<img.+?src=[\"'](.+?)[\"'].*?>", RegexOptions.IgnoreCase);
+                englishMatches.ToList().ForEach(match =>
                 {
                     string fileName = Path.GetFileName(match.Groups[1].Value);
                     string sourceFileName = Path.Combine(uploadPath, fileName);

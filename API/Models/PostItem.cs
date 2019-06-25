@@ -12,14 +12,20 @@ namespace API.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string Image { get; set; }
-        public string Title { get; set; }
-        public string Content { get; set; }
         public DateTime Creation { get; set; }
         public int ReadingTime { get; set; }
-
         [Required]
         public int CategoryId { get; set; }
         public virtual Category Category { get; set; }
         public List<Tag> Tags { get; set; }
+
+        // FRENCH
+        public string FrenchTitle { get; set; }
+        public string FrenchContent { get; set; }
+
+        // ENGLISH
+        public string EnglishTitle { get; set; }
+        public string EnglishContent { get; set; }
     }
 }
+ 
