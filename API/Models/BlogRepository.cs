@@ -69,9 +69,9 @@ namespace API.Models
             return result;
         }
 
-        public void UpdateTag(int postId, string tagOldName, string tagNewName)
+        public void UpdateTag(int postId, string tagOldName, string tagNewName, string language)
         {
-            var entity = _context.Tags.Where(x => x.PostItemId == postId && x.Name == tagOldName).SingleOrDefault();
+            var entity = _context.Tags.Where(x => x.PostItemId == postId && x.Name == tagOldName && x.language == language).SingleOrDefault();
             if (entity != null)
             {
                 entity.Name = tagNewName;

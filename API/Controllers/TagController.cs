@@ -53,7 +53,8 @@ namespace API.Controllers
             var postId = (int)obj.GetValue("postId");
             var tagOldName = (string)obj.GetValue("tagOldName");
             var tagNewName = (string)obj.GetValue("tagNewName");
-            _blogRepository.UpdateTag(postId, tagOldName, tagNewName);
+            var language = (string)obj.GetValue("language");
+            _blogRepository.UpdateTag(postId, tagOldName, tagNewName, language);
             return Ok();
         }
 

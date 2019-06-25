@@ -14,11 +14,11 @@ namespace API.Models
 
         // T A G S
 
-        void CreateTag(Tag item);                                           // CREATE
-        IEnumerable<Tag> GetAllTags();                                      // READ
-        Tag GetTag(int id);                                                 // READ
-        void UpdateTag(int postId, string tagOldName, string tagNewName);   // UPDATE
-        void DeleteTag(int postId, string tagName);                         // DELETE
+        void CreateTag(Tag item);                                                           // CREATE
+        IEnumerable<Tag> GetAllTags();                                                      // READ
+        Tag GetTag(int id);                                                                 // READ
+        void UpdateTag(int postId, string tagOldName, string tagNewName, string language);  // UPDATE
+        void DeleteTag(int postId, string tagName);                                         // DELETE
 
         // C A T E G O R I E S
 
