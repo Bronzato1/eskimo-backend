@@ -9,6 +9,7 @@ namespace API.Models
     public class BlogRepository : IBlogRepository
     {
         private readonly BlogContext _context;
+        private readonly int _page_size = 5;
 
         public BlogRepository(BlogContext context)
         {
@@ -23,9 +24,14 @@ namespace API.Models
             _context.SaveChanges();
         }
 
-        public IEnumerable<PostItem> GetAllPosts()
+        public IEnumerable<PostItem> GetPosts()
         {
             return _context.PostItems.Include(x => x.Category).Include(x => x.Tags).ToList();
+        }
+
+        public IEnumerable<PostItem> GetPostsWithPagination(int page)
+        {
+            return _context.PostItems.Include(x => x.Category).Include(x => x.Tags).Skip(page * _page_size).Take(_page_size).ToList();
         }
 
         public PostItem GetPost(int id)

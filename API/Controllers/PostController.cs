@@ -42,9 +42,15 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<PostItem> GetAll()
+        public IEnumerable<PostItem> GetPosts()
         {
-            return _blogRepository.GetAllPosts();
+            return _blogRepository.GetPosts();
+        }
+
+        [HttpGet("GetPostsWithPagination/{page}")]
+        public IEnumerable<PostItem> GetPostsWithPagination([FromQuery] int page)
+        {
+            return _blogRepository.GetPostsWithPagination(page);
         }
 
         [HttpGet("{id}", Name = "GetPost")]
@@ -154,7 +160,7 @@ namespace API.Controllers
             di = new System.IO.DirectoryInfo(exportPath);
             foreach (var file in di.EnumerateFiles("*.*")) { file.Delete(); }
 
-            var data = _blogRepository.GetAllPosts().Where(x => ids.Contains(x.Id)).ToList();
+            var data = _blogRepository.GetPosts().Where(x => ids.Contains(x.Id)).ToList();
             string json = Newtonsoft.Json.JsonConvert.SerializeObject(data, Newtonsoft.Json.Formatting.Indented,
             new Newtonsoft.Json.JsonSerializerSettings
             {
@@ -163,7 +169,7 @@ namespace API.Controllers
 
             System.IO.File.WriteAllText(jsonFilePath, json.ToString());
 
-            _blogRepository.GetAllPosts().Where(x => ids.Contains(x.Id)).ToList().ForEach(x =>
+            _blogRepository.GetPosts().Where(x => ids.Contains(x.Id)).ToList().ForEach(x =>
             {
                 MatchCollection frenchMatches = Regex.Matches(x.FrenchContent, "<img.+?src=[\"'](.+?)[\"'].*?>", RegexOptions.IgnoreCase);
                 frenchMatches.ToList().ForEach(match =>

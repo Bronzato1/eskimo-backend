@@ -6,11 +6,12 @@ namespace API.Models
     {
         // P O S T S
 
-        void CreatePost(PostItem item);         // CREATE
-        IEnumerable<PostItem> GetAllPosts();    // READ
-        PostItem GetPost(int id);               // READ
-        void UpdatePost(PostItem item);         // UPDATE
-        void DeletePost(int id);                // DELETE
+        void CreatePost(PostItem item);                         // CREATE
+        IEnumerable<PostItem> GetPosts();                       // READ
+        IEnumerable<PostItem> GetPostsWithPagination(int id);    // READ
+        PostItem GetPost(int id);                               // READ
+        void UpdatePost(PostItem item);                         // UPDATE
+        void DeletePost(int id);                                // DELETE
 
         // T A G S
 
