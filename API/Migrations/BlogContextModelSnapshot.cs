@@ -48,6 +48,8 @@ namespace api.Migrations
 
                     b.Property<string>("EnglishTitle");
 
+                    b.Property<bool>("Favorite");
+
                     b.Property<string>("FrenchContent");
 
                     b.Property<string>("FrenchTitle");

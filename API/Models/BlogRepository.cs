@@ -34,6 +34,11 @@ namespace API.Models
             return _context.PostItems.Include(x => x.Category).Include(x => x.Tags).Skip(page * _page_size).Take(_page_size).ToList();
         }
 
+        public IEnumerable<PostItem> GetPostsInFavorites()
+        {
+            return _context.PostItems.Include(x => x.Category).Include(x => x.Tags).Where(x => x.Favorite == true).ToList();
+        }
+
         public PostItem GetPost(int id)
         {
             var result = _context.PostItems.Include(x => x.Category).Include(x => x.Tags).Where(t => t.Id == id).FirstOrDefault();
@@ -44,6 +49,24 @@ namespace API.Models
         {
             _context.PostItems.Update(item);
             _context.SaveChanges();
+        }
+
+        public void AddPostToFavorite(int id) {
+            var post = _context.PostItems.Where(x => x.Id == id).SingleOrDefault();
+            if (post != null)
+            {
+                post.Favorite = true;
+                _context.SaveChanges();
+            }
+        }
+
+        public void RemovePostFromFavorite(int id) {
+            var post = _context.PostItems.Where(x => x.Id == id).SingleOrDefault();
+            if (post != null)
+            {
+                post.Favorite = false;
+                _context.SaveChanges();
+            }
         }
 
         public void DeletePost(int id)

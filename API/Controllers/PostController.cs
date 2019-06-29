@@ -53,6 +53,12 @@ namespace API.Controllers
             return _blogRepository.GetPostsWithPagination(page);
         }
 
+        [HttpGet("GetPostsInFavorites")]
+        public IEnumerable<PostItem> GetPostsInFavorites()
+        {
+            return _blogRepository.GetPostsInFavorites();
+        }
+
         [HttpGet("{id}", Name = "GetPost")]
         public IActionResult GetById(int id)
         {
@@ -89,6 +95,20 @@ namespace API.Controllers
 
             _blogRepository.UpdatePost(post);
             return CreatedAtRoute("GetPost", new { id = item.Id }, item);
+        }
+
+        [HttpPost("AddPostToFavorite/{id}")]
+        public IActionResult AddPostToFavorite(int id)
+        {
+            _blogRepository.AddPostToFavorite(id);
+            return new NoContentResult();
+        }
+
+        [HttpPost("RemovePostFromFavorite/{id}")]
+        public IActionResult RemovePostFromFavorite(int id)
+        {
+            _blogRepository.RemovePostFromFavorite(id);
+            return new NoContentResult();
         }
 
         [HttpDelete("{id}")]

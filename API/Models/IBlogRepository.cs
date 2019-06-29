@@ -8,11 +8,14 @@ namespace API.Models
 
         void CreatePost(PostItem item);                         // CREATE
         IEnumerable<PostItem> GetPosts();                       // READ
-        IEnumerable<PostItem> GetPostsWithPagination(int id);    // READ
+        IEnumerable<PostItem> GetPostsWithPagination(int id);   // READ
+        IEnumerable<PostItem> GetPostsInFavorites();            // READ
         PostItem GetPost(int id);                               // READ
         void UpdatePost(PostItem item);                         // UPDATE
+        void AddPostToFavorite(int id);                         // UPDATE
+        void RemovePostFromFavorite(int id);                    // UPDATE
         void DeletePost(int id);                                // DELETE
-
+        
         // T A G S
 
         void CreateTag(Tag item);                                                           // CREATE

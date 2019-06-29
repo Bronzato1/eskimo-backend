@@ -14,10 +14,11 @@ namespace API.Models
         public string Image { get; set; }
         public DateTime Creation { get; set; }
         public int ReadingTime { get; set; }
-        [Required]
         public int CategoryId { get; set; }
+        public bool Favorite { get; set; }
+
         public virtual Category Category { get; set; }
-        public List<Tag> Tags { get; set; }
+        public virtual List<Tag> Tags { get; set; }
 
         // FRENCH
         public string FrenchTitle { get; set; }
