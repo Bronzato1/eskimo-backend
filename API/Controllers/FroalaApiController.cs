@@ -67,11 +67,11 @@ namespace API.Controllers
             }
         }
 
-        public ActionResult UploadImageResize()
+        public ActionResult UploadImageResize1200x600()
         {
             string fileRoute = "wwwroot/uploads/";
 
-            MagickGeometry resizeGeometry = new MagickGeometry(300, 300);
+            MagickGeometry resizeGeometry = new MagickGeometry(1200, 600);
             resizeGeometry.IgnoreAspectRatio = true;
 
             FroalaEditor.ImageOptions options = new FroalaEditor.ImageOptions
