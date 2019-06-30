@@ -30,16 +30,7 @@ namespace API.Controllers
             _blogRepository = blogRepository;
         }
 
-        [HttpPost]
-        public IActionResult CreatePost([FromBody] PostItem item)
-        {
-            if (item == null)
-            {
-                return BadRequest();
-            }
-            _blogRepository.CreatePost(item);
-            return CreatedAtRoute("GetPost", new { id = item.Id }, item);
-        }
+        // GET
 
         [HttpGet]
         public IEnumerable<PostItem> GetPosts()
@@ -47,10 +38,10 @@ namespace API.Controllers
             return _blogRepository.GetPosts();
         }
 
-        [HttpGet("GetPostsWithPagination/{page}")]
-        public IEnumerable<PostItem> GetPostsWithPagination([FromQuery] int page)
+        [HttpGet("GetPostsByPage")]
+        public IEnumerable<PostItem> GetPostsByPage([FromQuery] int page)
         {
-            return _blogRepository.GetPostsWithPagination(page);
+            return _blogRepository.GetPostsByPage(page);
         }
 
         [HttpGet("GetPostsInFavorites")]
@@ -69,6 +60,21 @@ namespace API.Controllers
             }
             return new ObjectResult(item);
         }
+
+        [HttpGet("GetTotalPostPages")]
+        public IActionResult GetTotalPostPages() {
+            var tot = _blogRepository.GetTotalPostPages();
+            return new ObjectResult(tot);
+        }
+
+        [HttpGet("ClearAllPosts")]
+        public IActionResult ClearAllPosts()
+        {
+            var rowsAffectedCount = _blogcontext.Database.ExecuteSqlCommand("delete from PostItems");
+            return Ok(new { count = rowsAffectedCount });
+        }
+
+        // PUT
 
         [HttpPut("{id}")]
         public IActionResult UpdatePost(int id, [FromBody] PostItem item)
@@ -97,6 +103,19 @@ namespace API.Controllers
             return CreatedAtRoute("GetPost", new { id = item.Id }, item);
         }
 
+        // POST
+
+        [HttpPost]
+        public IActionResult CreatePost([FromBody] PostItem item)
+        {
+            if (item == null)
+            {
+                return BadRequest();
+            }
+            _blogRepository.CreatePost(item);
+            return CreatedAtRoute("GetPost", new { id = item.Id }, item);
+        }
+
         [HttpPost("AddPostToFavorite/{id}")]
         public IActionResult AddPostToFavorite(int id)
         {
@@ -108,53 +127,6 @@ namespace API.Controllers
         public IActionResult RemovePostFromFavorite(int id)
         {
             _blogRepository.RemovePostFromFavorite(id);
-            return new NoContentResult();
-        }
-
-        [HttpDelete("{id}")]
-        public IActionResult DeletePost(int id)
-        {
-            var post = _blogRepository.GetPost(id);
-            if (post == null)
-            {
-                return NotFound();
-            }
-
-            if (post.Image != null)
-            {
-                string fileName = System.IO.Path.GetFileName(post.Image);
-                string fullPath = System.IO.Path.GetFullPath("wwwroot/uploads/" + fileName);
-                if (System.IO.File.Exists(fullPath))
-                    System.IO.File.Delete(fullPath);
-            }
-
-            if (post.FrenchContent != null)
-            {
-                var matches = Regex.Matches(post.FrenchContent, "<img.+?src=[\"'](.+?)[\"'].+?>", RegexOptions.IgnoreCase);
-                foreach (Match match in matches)
-                {
-                    string urlPath = match.Groups[1].Value;
-                    string fileName = System.IO.Path.GetFileName(urlPath);
-                    string fullPath = System.IO.Path.GetFullPath("wwwroot/uploads/" + fileName);
-                    if (System.IO.File.Exists(fullPath))
-                        System.IO.File.Delete(fullPath);
-                }
-            }
-
-            if (post.EnglishContent != null)
-            {
-                var matches = Regex.Matches(post.EnglishContent, "<img.+?src=[\"'](.+?)[\"'].+?>", RegexOptions.IgnoreCase);
-                foreach (Match match in matches)
-                {
-                    string urlPath = match.Groups[1].Value;
-                    string fileName = System.IO.Path.GetFileName(urlPath);
-                    string fullPath = System.IO.Path.GetFullPath("wwwroot/uploads/" + fileName);
-                    if (System.IO.File.Exists(fullPath))
-                        System.IO.File.Delete(fullPath);
-                }
-            }
-
-            _blogRepository.DeletePost(id);
             return new NoContentResult();
         }
 
@@ -296,11 +268,55 @@ namespace API.Controllers
             return Ok(new { countSucceed = countSucceed, countError = countError, errors = errors });
         }
 
-        [HttpGet("ClearAllPosts")]
-        public IActionResult ClearAllPosts()
+        // DELETE
+
+        [HttpDelete("{id}")]
+        public IActionResult DeletePost(int id)
         {
-            var rowsAffectedCount = _blogcontext.Database.ExecuteSqlCommand("delete from PostItems");
-            return Ok(new { count = rowsAffectedCount });
+            var post = _blogRepository.GetPost(id);
+            if (post == null)
+            {
+                return NotFound();
+            }
+
+            if (post.Image != null)
+            {
+                string fileName = System.IO.Path.GetFileName(post.Image);
+                string fullPath = System.IO.Path.GetFullPath("wwwroot/uploads/" + fileName);
+                if (System.IO.File.Exists(fullPath))
+                    System.IO.File.Delete(fullPath);
+            }
+
+            if (post.FrenchContent != null)
+            {
+                var matches = Regex.Matches(post.FrenchContent, "<img.+?src=[\"'](.+?)[\"'].+?>", RegexOptions.IgnoreCase);
+                foreach (Match match in matches)
+                {
+                    string urlPath = match.Groups[1].Value;
+                    string fileName = System.IO.Path.GetFileName(urlPath);
+                    string fullPath = System.IO.Path.GetFullPath("wwwroot/uploads/" + fileName);
+                    if (System.IO.File.Exists(fullPath))
+                        System.IO.File.Delete(fullPath);
+                }
+            }
+
+            if (post.EnglishContent != null)
+            {
+                var matches = Regex.Matches(post.EnglishContent, "<img.+?src=[\"'](.+?)[\"'].+?>", RegexOptions.IgnoreCase);
+                foreach (Match match in matches)
+                {
+                    string urlPath = match.Groups[1].Value;
+                    string fileName = System.IO.Path.GetFileName(urlPath);
+                    string fullPath = System.IO.Path.GetFullPath("wwwroot/uploads/" + fileName);
+                    if (System.IO.File.Exists(fullPath))
+                        System.IO.File.Delete(fullPath);
+                }
+            }
+
+            _blogRepository.DeletePost(id);
+            return new NoContentResult();
         }
+
+
     }
 }

@@ -18,20 +18,15 @@ namespace API.Models
 
         // P O S T S
 
-        public void CreatePost(PostItem item)
-        {
-            _context.PostItems.Add(item);
-            _context.SaveChanges();
-        }
 
         public IEnumerable<PostItem> GetPosts()
         {
             return _context.PostItems.Include(x => x.Category).Include(x => x.Tags).ToList();
         }
 
-        public IEnumerable<PostItem> GetPostsWithPagination(int page)
+        public IEnumerable<PostItem> GetPostsByPage(int page)
         {
-            return _context.PostItems.Include(x => x.Category).Include(x => x.Tags).Skip(page * _page_size).Take(_page_size).ToList();
+            return _context.PostItems.Include(x => x.Category).Include(x => x.Tags).Skip((page -1) * _page_size).Take(_page_size).ToList();
         }
 
         public IEnumerable<PostItem> GetPostsInFavorites()
@@ -45,9 +40,14 @@ namespace API.Models
             return result;
         }
 
-        public void UpdatePost(PostItem item)
+        public int GetTotalPostPages() {
+            int val =  (_context.PostItems.Count() + _page_size - 1) / _page_size;
+            return val;
+        }
+
+        public void CreatePost(PostItem item)
         {
-            _context.PostItems.Update(item);
+            _context.PostItems.Add(item);
             _context.SaveChanges();
         }
 
@@ -67,6 +67,12 @@ namespace API.Models
                 post.Favorite = false;
                 _context.SaveChanges();
             }
+        }
+
+        public void UpdatePost(PostItem item)
+        {
+            _context.PostItems.Update(item);
+            _context.SaveChanges();
         }
 
         public void DeletePost(int id)
