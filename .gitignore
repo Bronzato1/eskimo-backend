@@ -3,5 +3,6 @@ API/obj/
 API/publish/
 API/App_Data/
 API/wwwroot/uploads/
+API/Utilities/Secret.cs
 FROALA/bin/
 FROALA/obj/
