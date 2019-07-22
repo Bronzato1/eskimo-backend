@@ -23,8 +23,22 @@ dotnet ef database update
 dotnet ef database update <migration>
 -------
 
+### Pour compiler le projet pour la production (Azure)
+
 - suppr du répertoire publish
 - dotnet publish API -c Release -o ./publish
 - copier/coller le rép App_Data dans le rép publish
 - clic-droit sur le répertoire publish et choisir Deploy to web app > eskimoApp
+
+### Pour héberger un site dynamique sous Azure
+
+- Web App / Add
+- Resource Group: (Create new) AzurBlogging
+- Name: (Web App name) AzurBlogging 
+- Runtime stack: .NET Core 2.2
+- Operating System: Windows
+- Region: West Europe
+- Windows Plan: (Create new) AzurBloggingServicePlan
+- Sku and size: D1 Shared Infrastructure 8.11 €/mois (Estimated)
+- Application Insights: (New) AzurBlogging (West Europe)
 

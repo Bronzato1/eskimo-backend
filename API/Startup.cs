@@ -35,7 +35,7 @@ namespace API
             corsBuilder.AllowAnyHeader();
             corsBuilder.AllowAnyMethod();
             corsBuilder.AllowCredentials();
-            corsBuilder.WithOrigins("http://localhost:9000", "https://eskimoo.z28.web.core.windows.net");
+            corsBuilder.WithOrigins("http://localhost:9000", "https://azurblogging.z6.web.core.windows.net");
             //corsBuilder.AllowAnyOrigin();
 
             services.AddCors(options =>
