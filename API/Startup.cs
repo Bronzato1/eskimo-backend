@@ -12,13 +12,17 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using API.Models;
+using API.Utilities;
 
 namespace API
 {
     public class Startup
     {
+        Secret _secret;
+
         public Startup(IHostingEnvironment env)
         {
+            _secret = new Secret();
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -35,7 +39,7 @@ namespace API
             corsBuilder.AllowAnyHeader();
             corsBuilder.AllowAnyMethod();
             corsBuilder.AllowCredentials();
-            corsBuilder.WithOrigins("http://localhost:9000", "https://azurblogging.z6.web.core.windows.net");
+            corsBuilder.WithOrigins(_secret.CorsAllowedOrigins);
             //corsBuilder.AllowAnyOrigin();
 
             services.AddCors(options =>

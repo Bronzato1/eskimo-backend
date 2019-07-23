@@ -33,12 +33,12 @@ dotnet ef database update <migration>
 ### Pour héberger un site dynamique sous Azure
 
 - Web App / Add
-- Resource Group: (Create new) AzurBlogging
-- Name: (Web App name) AzurBlogging 
+- Resource Group: (Create new) FrenchCoder
+- Name: (Web App name) FrenchCoder
 - Runtime stack: .NET Core 2.2
 - Operating System: Windows
 - Region: West Europe
-- Windows Plan: (Create new) AzurBloggingServicePlan
+- Windows Plan: (Create new) FrenchCoderServicePlan
 - Sku and size: D1 Shared Infrastructure 8.11 €/mois (Estimated)
-- Application Insights: (New) AzurBlogging (West Europe)
+- Application Insights: (New) FrenchCoder (West Europe)
 
