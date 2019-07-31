@@ -41,5 +41,26 @@ namespace API.Utilities
                 return false;
             }
         }
+        public bool Signup(string email)
+        {
+            MailAddress from = new MailAddress(_secret.SmtpMailFrom);
+            MailAddress to = new MailAddress(_secret.SmtpMailTo);
+            MailMessage mail = new MailMessage(from, to);
+
+            mail.Subject = "Azur blogging";
+            mail.IsBodyHtml = true;
+            mail.Body = "<p>Newsletter signup: " + email + "</p>";
+            mail.ReplyToList.Add(email);
+
+            try
+            {
+                _client.Send(mail);
+                return true;
+            }
+            catch (SmtpException)
+            {
+                return false;
+            }
+        }
     }
 }

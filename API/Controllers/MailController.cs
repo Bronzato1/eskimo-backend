@@ -26,5 +26,13 @@ namespace API.Controllers
             var ret = _mailHelper.SendMail(name, email, phone, message);
             return Ok(new { success = ret});
         }
+
+        [HttpPost("Signup")]
+        public IActionResult Signup([FromBody] JObject obj)
+        {
+            var email = (string)obj.GetValue("email");
+            var ret = _mailHelper.Signup(email);
+            return Ok(new { success = ret});
+        }
     }
 }
