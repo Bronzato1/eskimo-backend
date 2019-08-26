@@ -9,7 +9,7 @@ namespace API.Models
     public class BlogRepository : IBlogRepository
     {
         private readonly BlogContext _context;
-        private readonly int _page_size = 5;
+        private readonly int _page_size = 15;
 
         public BlogRepository(BlogContext context)
         {
@@ -24,9 +24,25 @@ namespace API.Models
             return _context.PostItems.Include(x => x.Category).Include(x => x.Tags).ToList();
         }
 
-        public IEnumerable<PostItem> GetPostsByPage(int page)
+        public IEnumerable<PostItem> GetPostsByPage(int? mediaId, int? categoryId, int? tagId, int page)
         {
-            return _context.PostItems.Include(x => x.Category).Include(x => x.Tags).Skip((page -1) * _page_size).Take(_page_size).ToList();
+            var qry = _context.PostItems.Include(x => x.Category).Include(x => x.Tags).AsQueryable();
+
+            if (mediaId != null)
+            {
+                EnumMedia media = (EnumMedia)mediaId;
+                qry = qry.Where(x => x.Media == media);
+            }
+
+            if (categoryId != null)
+                qry = qry.Where(x => x.CategoryId == categoryId);
+
+            if (tagId != null)
+                qry = qry.Where(x => x.Tags.Exists(y => y.Id == tagId));
+
+            qry = qry.Skip((page - 1) * _page_size).Take(_page_size);
+
+            return qry.ToList();
         }
 
         public IEnumerable<PostItem> GetPostsInFavorites()
@@ -40,8 +56,9 @@ namespace API.Models
             return result;
         }
 
-        public int GetTotalPostPages() {
-            int val =  (_context.PostItems.Count() + _page_size - 1) / _page_size;
+        public int GetTotalPostPages()
+        {
+            int val = (_context.PostItems.Count() + _page_size - 1) / _page_size;
             return val;
         }
 
@@ -51,7 +68,8 @@ namespace API.Models
             _context.SaveChanges();
         }
 
-        public void AddPostToFavorite(int id) {
+        public void AddPostToFavorite(int id)
+        {
             var post = _context.PostItems.Where(x => x.Id == id).SingleOrDefault();
             if (post != null)
             {
@@ -60,7 +78,8 @@ namespace API.Models
             }
         }
 
-        public void RemovePostFromFavorite(int id) {
+        public void RemovePostFromFavorite(int id)
+        {
             var post = _context.PostItems.Where(x => x.Id == id).SingleOrDefault();
             if (post != null)
             {

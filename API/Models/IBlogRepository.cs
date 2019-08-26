@@ -6,16 +6,16 @@ namespace API.Models
     {
         // P O S T S
 
-        IEnumerable<PostItem> GetPosts();                       // GET
-        IEnumerable<PostItem> GetPostsByPage(int id);           // GET
-        IEnumerable<PostItem> GetPostsInFavorites();            // GET
-        PostItem GetPost(int id);                               // GET
-        int GetTotalPostPages();                                // GET
-        void CreatePost(PostItem item);                         // POST
-        void AddPostToFavorite(int id);                         // POST
-        void RemovePostFromFavorite(int id);                    // POST
-        void UpdatePost(PostItem item);                         // UPDATE
-        void DeletePost(int id);                                // DELETE
+        IEnumerable<PostItem> GetPosts();                               // GET
+        IEnumerable<PostItem> GetPostsByPage(int? mediaId, int? categoryId, int? tagId, int id);  // GET
+        IEnumerable<PostItem> GetPostsInFavorites();                    // GET
+        PostItem GetPost(int id);                                       // GET
+        int GetTotalPostPages();                                        // GET
+        void CreatePost(PostItem item);                                 // POST
+        void AddPostToFavorite(int id);                                 // POST
+        void RemovePostFromFavorite(int id);                            // POST
+        void UpdatePost(PostItem item);                                 // UPDATE
+        void DeletePost(int id);                                        // DELETE
         
         // T A G S
 

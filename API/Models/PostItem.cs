@@ -16,6 +16,7 @@ namespace API.Models
         public int ReadingTime { get; set; }
         public int CategoryId { get; set; }
         public bool Favorite { get; set; }
+        public EnumMedia Media { get; set; }
 
         public virtual Category Category { get; set; }
         public virtual List<Tag> Tags { get; set; }
@@ -27,6 +28,12 @@ namespace API.Models
         // ENGLISH
         public string EnglishTitle { get; set; }
         public string EnglishContent { get; set; }
+    }
+
+    public enum EnumMedia {
+        Text = 1,
+        Audio = 2,
+        Video = 3
     }
 }
  

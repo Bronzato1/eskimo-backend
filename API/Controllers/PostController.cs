@@ -39,9 +39,9 @@ namespace API.Controllers
         }
 
         [HttpGet("GetPostsByPage")]
-        public IEnumerable<PostItem> GetPostsByPage([FromQuery] int page)
+        public IEnumerable<PostItem> GetPostsByPage([FromQuery] int? mediaId, [FromQuery] int? categoryId, [FromQuery] int? tagId, [FromQuery] int page)
         {
-            return _blogRepository.GetPostsByPage(page);
+            return _blogRepository.GetPostsByPage(mediaId, categoryId, tagId, page);
         }
 
         [HttpGet("GetPostsInFavorites")]
@@ -96,6 +96,7 @@ namespace API.Controllers
             post.FrenchContent = item.FrenchContent;
             post.EnglishContent = item.EnglishContent;
             post.Creation = item.Creation;
+            post.Media = item.Media;
             post.CategoryId = item.CategoryId;
             post.ReadingTime = item.ReadingTime;
 
