@@ -29,7 +29,7 @@ namespace FroalaEditor
         /// </summary>
         /// <returns>true if content type is multipart.</returns>
         public static bool CheckContentType(HttpContext httpContext)
-        {       
+        {
             bool isMultipart = httpContext.Request.ContentType.StartsWith(MultipartContentType);
 
             return isMultipart;
@@ -86,7 +86,7 @@ namespace FroalaEditor
 
             string name = $"{Utils.GenerateUniqueString()}.{extension}";
 
-            string link = fileRoute + name; 
+            string link = fileRoute + name;
 
             // Bug Fixes in File.cs #2
             // https://github.com/froala/wysiwyg-editor-dotnet-sdk/issues/2
@@ -131,7 +131,7 @@ namespace FroalaEditor
         /// </summary>
         /// <param name="path">Relative path.</param>
         /// <returns>Absolute path.</returns>
-        public static String GetAbsoluteServerPath(string path) 
+        public static String GetAbsoluteServerPath(string path)
         {
 #if netcore
             return path;
@@ -172,7 +172,9 @@ namespace FroalaEditor
         public static void Delete(string filePath)
         {
 #if netcore
-            filePath = "wwwroot/" + filePath;
+            //filePath = "wwwroot/" + filePath;
+            string fileName = System.IO.Path.GetFileName(filePath);
+            filePath = System.IO.Path.GetFullPath("wwwroot/uploads/" + fileName);
 #else
             filePath = File.GetAbsoluteServerPath(filePath);
 #endif

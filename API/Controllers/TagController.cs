@@ -61,9 +61,8 @@ namespace API.Controllers
         [HttpPost("DeleteTag")]
         public IActionResult DeleteTag([FromBody] JObject obj)
         {
-            var postId = (int)obj.GetValue("postId");
-            var tagName = (string)obj.GetValue("tagName");
-            _blogRepository.DeleteTag(postId, tagName);
+            var tagId = (int)obj.GetValue("tagId");
+            _blogRepository.DeleteTag(tagId);
             return Ok();
         }
     }

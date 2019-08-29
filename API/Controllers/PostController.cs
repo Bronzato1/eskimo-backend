@@ -97,6 +97,12 @@ namespace API.Controllers
             post.EnglishContent = item.EnglishContent;
             post.Creation = item.Creation;
             post.Media = item.Media;
+
+            if (post.Media == EnumMedia.Video)
+                post.YoutubeVideoId = item.YoutubeVideoId;
+            else
+                post.YoutubeVideoId = null;
+                
             post.CategoryId = item.CategoryId;
             post.ReadingTime = item.ReadingTime;
 

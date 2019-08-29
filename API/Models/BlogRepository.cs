@@ -133,9 +133,9 @@ namespace API.Models
             }
         }
 
-        public void DeleteTag(int postId, string tagName)
+        public void DeleteTag(int tagId)
         {
-            var entity = _context.Tags.Where(x => x.PostItemId == postId && x.Name == tagName).SingleOrDefault();
+            var entity = _context.Tags.Where(x => x.Id == tagId).SingleOrDefault();
             if (entity != null)
             {
                 _context.Tags.Remove(entity);

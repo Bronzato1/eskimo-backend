@@ -23,7 +23,7 @@ namespace API.Models
         IEnumerable<Tag> GetAllTags();                                                      // READ
         Tag GetTag(int id);                                                                 // READ
         void UpdateTag(int postId, string tagOldName, string tagNewName, string language);  // UPDATE
-        void DeleteTag(int postId, string tagName);                                         // DELETE
+        void DeleteTag(int tagId);                                                          // DELETE
 
         // C A T E G O R I E S
 
