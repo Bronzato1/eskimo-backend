@@ -32,5 +32,13 @@ namespace API.Models
         Category GetCategory(int id);               // READ
         void UpdateCategory(Category item);         // UPDATE
         void DeleteCategory(int categoryId);        // DELETE
+
+        // A U T H O R S
+
+        void CreateAuthor(Author item);             // CREATE
+        IEnumerable<Author> GetAllAuthors();        // READ
+        Author GetAuthor(int id);                   // READ
+        void UpdateAuthor(Author item);             // UPDATE
+        void DeleteAuthor(int authorId);            // DELETE
     }
 }

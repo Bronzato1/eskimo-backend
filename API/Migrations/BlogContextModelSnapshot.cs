@@ -16,6 +16,22 @@ namespace api.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.2.3-servicing-35854");
 
+            modelBuilder.Entity("API.Models.Author", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Name")
+                        .IsRequired();
+
+                    b.Property<string>("Url")
+                        .IsRequired();
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Authors");
+                });
+
             modelBuilder.Entity("API.Models.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -40,6 +56,8 @@ namespace api.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int>("AuthorId");
+
                     b.Property<int>("CategoryId");
 
                     b.Property<DateTime>("Creation");
@@ -63,6 +81,8 @@ namespace api.Migrations
                     b.Property<string>("YoutubeVideoId");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
 
                     b.HasIndex("CategoryId");
 
@@ -89,6 +109,11 @@ namespace api.Migrations
 
             modelBuilder.Entity("API.Models.PostItem", b =>
                 {
+                    b.HasOne("API.Models.Author", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("API.Models.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")

@@ -8,6 +8,20 @@ namespace api.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Authors",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(nullable: false),
+                    Url = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Authors", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
                 {
@@ -32,6 +46,10 @@ namespace api.Migrations
                     Creation = table.Column<DateTime>(nullable: false),
                     ReadingTime = table.Column<int>(nullable: false),
                     CategoryId = table.Column<int>(nullable: false),
+                    AuthorId = table.Column<int>(nullable: false),
+                    Favorite = table.Column<bool>(nullable: false),
+                    Media = table.Column<int>(nullable: false),
+                    YoutubeVideoId = table.Column<string>(nullable: true),
                     FrenchTitle = table.Column<string>(nullable: true),
                     FrenchContent = table.Column<string>(nullable: true),
                     EnglishTitle = table.Column<string>(nullable: true),
@@ -40,6 +58,12 @@ namespace api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PostItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PostItems_Authors_AuthorId",
+                        column: x => x.AuthorId,
+                        principalTable: "Authors",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_PostItems_Categories_CategoryId",
                         column: x => x.CategoryId,
@@ -70,6 +94,11 @@ namespace api.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_PostItems_AuthorId",
+                table: "PostItems",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PostItems_CategoryId",
                 table: "PostItems",
                 column: "CategoryId");
@@ -87,6 +116,9 @@ namespace api.Migrations
 
             migrationBuilder.DropTable(
                 name: "PostItems");
+
+            migrationBuilder.DropTable(
+                name: "Authors");
 
             migrationBuilder.DropTable(
                 name: "Categories");

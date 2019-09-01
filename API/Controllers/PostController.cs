@@ -62,7 +62,8 @@ namespace API.Controllers
         }
 
         [HttpGet("GetTotalPostPages")]
-        public IActionResult GetTotalPostPages() {
+        public IActionResult GetTotalPostPages()
+        {
             var tot = _blogRepository.GetTotalPostPages();
             return new ObjectResult(tot);
         }
@@ -102,8 +103,9 @@ namespace API.Controllers
                 post.YoutubeVideoId = item.YoutubeVideoId;
             else
                 post.YoutubeVideoId = null;
-                
+
             post.CategoryId = item.CategoryId;
+            post.AuthorId = item.AuthorId;
             post.ReadingTime = item.ReadingTime;
 
             _blogRepository.UpdatePost(post);
@@ -186,7 +188,7 @@ namespace API.Controllers
                     string destFileName = Path.Combine(exportPath, fileName);
                     System.IO.File.Copy(sourceFileName, destFileName);
                 });
-                if (x.Image != null)
+                if (x.Image != null && !x.Image.StartsWith("https://img.youtube.com"))
                 {
                     string fileName = Path.GetFileName(x.Image);
                     string sourceFileName = Path.Combine(uploadPath, fileName);
@@ -262,6 +264,10 @@ namespace API.Controllers
                     countSucceed++;
                     var categoryAlreadyExists = _blogcontext.Categories.Any(x => x.Id == postItem.CategoryId);
                     if (categoryAlreadyExists) postItem.Category = null;
+
+                    var authorAlreadyExists = _blogcontext.Authors.Any(x => x.Id == postItem.AuthorId);
+                    if (authorAlreadyExists) postItem.Author = null;
+
                     _blogRepository.CreatePost(postItem);
                 }
             }
@@ -273,6 +279,25 @@ namespace API.Controllers
                 System.IO.File.Delete(importFilePath);
 
             return Ok(new { countSucceed = countSucceed, countError = countError, errors = errors });
+        }
+
+        [HttpPost("DeleteAll")]
+        public async Task<IActionResult> DeleteAll()
+        {
+            string webrootPath = _hostingEnvironment.WebRootPath;
+            string uploadPath = System.IO.Path.Combine(webrootPath, "uploads");
+            int countImages = 0;
+            int countPosts = 0;
+
+            DirectoryInfo di;
+
+            di = new System.IO.DirectoryInfo(uploadPath);
+            foreach (var file in di.EnumerateFiles("*.png")) { file.Delete(); countImages++; }
+            foreach (var file in di.EnumerateFiles("*.jpg")) { file.Delete(); countImages++; }
+
+            countPosts = await _blogcontext.Database.ExecuteSqlCommandAsync("DELETE FROM PostItems");
+
+            return Ok(new { countImages = countImages, countPosts = countPosts });
         }
 
         // DELETE

@@ -21,12 +21,12 @@ namespace API.Models
 
         public IEnumerable<PostItem> GetPosts()
         {
-            return _context.PostItems.Include(x => x.Category).Include(x => x.Tags).ToList();
+            return _context.PostItems.Include(x => x.Category).Include(x => x.Author).Include(x => x.Tags).ToList();
         }
 
         public IEnumerable<PostItem> GetPostsByPage(int? mediaId, int? categoryId, int? tagId, int page)
         {
-            var qry = _context.PostItems.Include(x => x.Category).Include(x => x.Tags).AsQueryable();
+            var qry = _context.PostItems.Include(x => x.Category).Include(x => x.Author).Include(x => x.Tags).AsQueryable();
 
             if (mediaId != null)
             {
@@ -47,12 +47,12 @@ namespace API.Models
 
         public IEnumerable<PostItem> GetPostsInFavorites()
         {
-            return _context.PostItems.Include(x => x.Category).Include(x => x.Tags).Where(x => x.Favorite == true).ToList();
+            return _context.PostItems.Include(x => x.Category).Include(x => x.Author).Include(x => x.Tags).Where(x => x.Favorite == true).ToList();
         }
 
         public PostItem GetPost(int id)
         {
-            var result = _context.PostItems.Include(x => x.Category).Include(x => x.Tags).Where(t => t.Id == id).FirstOrDefault();
+            var result = _context.PostItems.Include(x => x.Category).Include(x => x.Author).Include(x => x.Tags).Where(t => t.Id == id).FirstOrDefault();
             return result;
         }
 
@@ -174,6 +174,41 @@ namespace API.Models
             if (cat != null)
             {
                 _context.Categories.Remove(cat);
+                _context.SaveChanges();
+            }
+        }
+
+        // A U T H O R S
+
+        public void CreateAuthor(Author item)
+        {
+            _context.Authors.Add(item);
+            _context.SaveChanges();
+        }
+
+        public IEnumerable<Author> GetAllAuthors()
+        {
+            return _context.Authors.ToList();
+        }
+
+        public Author GetAuthor(int id)
+        {
+            var result = _context.Authors.Where(t => t.Id == id).FirstOrDefault();
+            return result;
+        }
+
+        public void UpdateAuthor(Author item)
+        {
+            _context.Authors.Update(item);
+            _context.SaveChanges();
+        }
+
+        public void DeleteAuthor(int id)
+        {
+            var aut = _context.Authors.Where(x => x.Id == id).SingleOrDefault();
+            if (aut != null)
+            {
+                _context.Authors.Remove(aut);
                 _context.SaveChanges();
             }
         }

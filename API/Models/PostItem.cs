@@ -15,11 +15,13 @@ namespace API.Models
         public DateTime Creation { get; set; }
         public int ReadingTime { get; set; }
         public int CategoryId { get; set; }
+        public int AuthorId { get; set; }
         public bool Favorite { get; set; }
         public EnumMedia Media { get; set; }
         public string YoutubeVideoId { get; set; }
 
         public virtual Category Category { get; set; }
+        public virtual Author Author { get; set; }
         public virtual List<Tag> Tags { get; set; }
 
         // FRENCH
