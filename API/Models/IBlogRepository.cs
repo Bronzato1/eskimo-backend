@@ -38,6 +38,7 @@ namespace API.Models
         void CreateAuthor(Author item);             // CREATE
         IEnumerable<Author> GetAllAuthors();        // READ
         Author GetAuthor(int id);                   // READ
+        Author GetAuthorByName(string name);         // READ
         void UpdateAuthor(Author item);             // UPDATE
         void DeleteAuthor(int authorId);            // DELETE
     }

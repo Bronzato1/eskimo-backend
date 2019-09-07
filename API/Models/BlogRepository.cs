@@ -197,6 +197,11 @@ namespace API.Models
             return result;
         }
 
+        public Author GetAuthorByName(string name) {
+            var result = _context.Authors.Where(t => t.Name == name).FirstOrDefault();
+            return result;
+        }
+
         public void UpdateAuthor(Author item)
         {
             _context.Authors.Update(item);

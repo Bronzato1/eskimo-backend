@@ -17,6 +17,7 @@ namespace API.Models
         public int CategoryId { get; set; }
         public int AuthorId { get; set; }
         public bool Favorite { get; set; }
+        [Required]
         public EnumMedia Media { get; set; }
         public string YoutubeVideoId { get; set; }
 

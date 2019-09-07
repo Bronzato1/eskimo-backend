@@ -58,6 +58,17 @@ namespace API.Controllers
             return new ObjectResult(item);
         }
 
+        [HttpGet("GetAuthorByName/{name}")]
+        public IActionResult GetByName(string name)
+        {
+            var item = _blogRepository.GetAuthorByName(name);
+            if (item == null)
+            {
+                return NotFound();
+            }
+            return new ObjectResult(item);
+        }
+
         [HttpPut("{id}")]
         public IActionResult UpdateAuthor(int id, [FromBody] Author item)
         {
