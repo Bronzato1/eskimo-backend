@@ -75,6 +75,7 @@ namespace API.Controllers
             category.FrenchName = item.FrenchName;
             category.EnglishName = item.EnglishName;
             category.Color = item.Color;
+            category.Image = item.Image;
 
             _blogRepository.UpdateCategory(category);
             return new NoContentResult();

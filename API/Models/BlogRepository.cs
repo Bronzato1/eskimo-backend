@@ -9,7 +9,7 @@ namespace API.Models
     public class BlogRepository : IBlogRepository
     {
         private readonly BlogContext _context;
-        private readonly int _page_size = 15;
+        private readonly int _page_size = 50;
 
         public BlogRepository(BlogContext context)
         {
@@ -21,12 +21,12 @@ namespace API.Models
 
         public IEnumerable<PostItem> GetPosts()
         {
-            return _context.PostItems.Include(x => x.Category).Include(x => x.Author).Include(x => x.Tags).ToList();
+            return _context.PostItems.Include(x => x.Category).Include(x => x.Author).Include(x => x.Tags).OrderBy(x => x.Creation).ToList();
         }
 
         public IEnumerable<PostItem> GetPostsByPage(int? mediaId, int? categoryId, int? tagId, int page)
         {
-            var qry = _context.PostItems.Include(x => x.Category).Include(x => x.Author).Include(x => x.Tags).AsQueryable();
+            var qry = _context.PostItems.Include(x => x.Category).Include(x => x.Author).Include(x => x.Tags).OrderBy(x => x.Creation).AsQueryable();
 
             if (mediaId != null)
             {

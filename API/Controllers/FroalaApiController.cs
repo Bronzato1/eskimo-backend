@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Cors;
 using ImageMagick;
 
+
 namespace API.Controllers
 {
     [EnableCors("AureliaSPA")]

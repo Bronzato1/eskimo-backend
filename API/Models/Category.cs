@@ -14,5 +14,7 @@ namespace API.Models
         public string EnglishName { get; set; }
         [Required]
         public string Color { get; set; }
+        [Required]
+        public string Image { get; set; }
     }
 }

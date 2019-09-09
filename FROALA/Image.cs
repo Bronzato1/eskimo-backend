@@ -18,7 +18,6 @@ namespace FroalaEditor
         /// <summary>
         /// Content type string used in http multipart.
         /// </summary>
-
         public static ImageOptions defaultOptions = new ImageOptions();
 
         /// <summary>
