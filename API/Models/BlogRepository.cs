@@ -24,9 +24,14 @@ namespace API.Models
             return _context.PostItems.Include(x => x.Category).Include(x => x.Author).Include(x => x.Tags).OrderBy(x => x.Creation).ToList();
         }
 
-        public IEnumerable<PostItem> GetPostsByPage(int? mediaId, int? categoryId, int? tagId, int page)
+        public IEnumerable<PostItem> GetPostsByPage(int? mediaId, int? categoryId, int? tagId, string filter, int page)
         {
-            var qry = _context.PostItems.Include(x => x.Category).Include(x => x.Author).Include(x => x.Tags).OrderBy(x => x.Creation).AsQueryable();
+            var qry = _context.PostItems
+                .Include(x => x.Category)
+                .Include(x => x.Author)
+                .Include(x => x.Tags)
+                .OrderBy(x => x.Creation)
+                .AsQueryable();
 
             if (mediaId != null)
             {
@@ -39,6 +44,9 @@ namespace API.Models
 
             if (tagId != null)
                 qry = qry.Where(x => x.Tags.Exists(y => y.Id == tagId));
+
+            if (filter != null)
+                qry = qry.Where(x => x.FrenchTitle.Contains(filter, StringComparison.InvariantCultureIgnoreCase));
 
             qry = qry.Skip((page - 1) * _page_size).Take(_page_size);
 
@@ -197,7 +205,8 @@ namespace API.Models
             return result;
         }
 
-        public Author GetAuthorByName(string name) {
+        public Author GetAuthorByName(string name)
+        {
             var result = _context.Authors.Where(t => t.Name == name).FirstOrDefault();
             return result;
         }

@@ -7,7 +7,7 @@ namespace API.Models
         // P O S T S
 
         IEnumerable<PostItem> GetPosts();                               // GET
-        IEnumerable<PostItem> GetPostsByPage(int? mediaId, int? categoryId, int? tagId, int id);  // GET
+        IEnumerable<PostItem> GetPostsByPage(int? mediaId, int? categoryId, int? tagId, string filter, int id);  // GET
         IEnumerable<PostItem> GetPostsInFavorites();                    // GET
         PostItem GetPost(int id);                                       // GET
         int GetTotalPostPages();                                        // GET

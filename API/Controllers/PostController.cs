@@ -39,9 +39,9 @@ namespace API.Controllers
         }
 
         [HttpGet("GetPostsByPage")]
-        public IEnumerable<PostItem> GetPostsByPage([FromQuery] int? mediaId, [FromQuery] int? categoryId, [FromQuery] int? tagId, [FromQuery] int page)
+        public IEnumerable<PostItem> GetPostsByPage([FromQuery] int? mediaId, [FromQuery] int? categoryId, [FromQuery] int? tagId, [FromQuery] string filter, [FromQuery] int page)
         {
-            return _blogRepository.GetPostsByPage(mediaId, categoryId, tagId, page);
+            return _blogRepository.GetPostsByPage(mediaId, categoryId, tagId, filter, page);
         }
 
         [HttpGet("GetPostsInFavorites")]
