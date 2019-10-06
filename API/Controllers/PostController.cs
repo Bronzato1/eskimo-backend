@@ -92,6 +92,7 @@ namespace API.Controllers
             }
 
             post.Image = item.Image;
+            post.Audio = item.Audio;
             post.FrenchTitle = item.FrenchTitle;
             post.EnglishTitle = item.EnglishTitle;
             post.FrenchContent = item.FrenchContent;
@@ -99,10 +100,21 @@ namespace API.Controllers
             post.Creation = item.Creation;
             post.Media = item.Media;
 
-            if (post.Media == EnumMedia.Video)
-                post.YoutubeVideoId = item.YoutubeVideoId;
-            else
-                post.YoutubeVideoId = null;
+            switch (post.Media)
+            {
+                case EnumMedia.Text:
+                    post.SpreakerEpisodeId = null;
+                    post.YoutubeVideoId = null;
+                    break;
+                case EnumMedia.Audio:
+                post.SpreakerEpisodeId = item.SpreakerEpisodeId;
+                    post.YoutubeVideoId = null;
+                    break;
+                case EnumMedia.Video:
+                post.SpreakerEpisodeId = null;
+                    post.YoutubeVideoId = item.YoutubeVideoId;
+                    break;
+            }
 
             post.CategoryId = item.CategoryId;
             post.AuthorId = item.AuthorId;

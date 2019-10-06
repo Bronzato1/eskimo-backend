@@ -11,7 +11,10 @@ namespace API.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string Image { get; set; }
+        
+        public string Image { get; set; } // path to image file
+        public string Audio { get; set; } // path to audio file when Media is Audio
+        
         public DateTime Creation { get; set; }
         public int ReadingTime { get; set; }
         public int CategoryId { get; set; }
@@ -20,6 +23,7 @@ namespace API.Models
         [Required]
         public EnumMedia Media { get; set; }
         public string YoutubeVideoId { get; set; }
+        public string SpreakerEpisodeId { get; set; }
 
         public virtual Category Category { get; set; }
         public virtual Author Author { get; set; }
@@ -34,10 +38,10 @@ namespace API.Models
         public string EnglishContent { get; set; }
     }
 
-    public enum EnumMedia {
+    public enum EnumMedia
+    {
         Text = 1,
         Audio = 2,
         Video = 3
     }
 }
- 

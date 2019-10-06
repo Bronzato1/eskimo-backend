@@ -15,6 +15,8 @@ namespace API.Models
         [Required]
         public string Color { get; set; }
         [Required]
-        public string Image { get; set; }
+        public string ImageText { get; set; }
+        public string ImageAudio { get; set; }
+        public string ImageVideo { get; set; }
     }
 }
